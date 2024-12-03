@@ -1,10 +1,23 @@
- Stuff learned
+###launching the complete set of services (containers)
+
+ ##Learning objectives:
+ How to launch a complete set of services(containers)?
+ - define them in the docker-compose.yml file
+ - `docker-compose up`
+ - `docker-compose down`
+
+ `docker-compose up`
+ is the one command for launching the complete set of services (containers) defined in a docker-compose.yml
+
+ ##Stuff learned:
  1. I had a port conflict, port 5000 was busy and I was learned that
  -it's best not to kill a process if you don't know what it does
  -to know if what process is running on a port, use `lsof -i :5000`
+
  2. commands to start containers or remove containers
  `docker-compose up`
- This starts the containers and shows the logs in the terminal.
+ starts the containers and shows the logs in the terminal
+
  ❯ docker-compose up
 [+] Running 2/0
  ✔ Network docker_compose_example_default  Created                                                                                                                   0.0s
@@ -12,12 +25,14 @@
 
  `docker-compose down`
  This stops and removes the containers, networks, and default volumes associated with the docker-compose.yml file
+
  ❯ docker-compose down
 [+] Running 2/0
  ✔ Container docker_compose_example-web-1  Removed                                                                                                                   0.0s
  ✔ Network docker_compose_example_default  Removed
 
  While running the container I got this error:
+
  ❯ docker-compose up
 [+] Running 2/0
  ✔ Network docker_compose_example_default  Created                                                                                                                   0.0s
@@ -28,7 +43,8 @@ Gracefully stopping... (press Ctrl+C again to force)
  ✔ Container docker_compose_example-web-1  Stopped                                                                                                                   0.0s
 Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:5000 -> 0.0.0.0:0: listen tcp 0.0.0.0:5000: bind: address already in use
 
-I changed the ports but the application did not run and old ports were showing up
+I changed the ports but the application did not run and old ports were showing up:
+
 ❯ docker-compose up
 [+] Running 1/0
  ✔ Container docker_compose_example-web-1  Recreated                                                                                                                 0.0s
@@ -41,13 +57,14 @@ web-1  |  * Running on http://127.0.0.1:5000
 web-1  |  * Running on http://172.19.0.2:5000
 
 I learned that I need to rebuild the container(s) from the Dockerfile so I did this with
-docker-compose up --build
+`docker-compose up --build`
 
-It rebuilt but the problem persisted, I was not able to open the app on the local host
+I rebuilt but the problem persisted, I was not able to open the app on the local host in the port that I specified
 http://127.0.0.1:5005
 
-and also I could see that the output in the Terminal shows the old ports, no change is visible
-This is because some of the files get CACHED:
+and also I could see that the output in the Terminal shows the old ports, port change was not visible
+this is because some of the files get CACHED. find CACHED in the logs:
+
  => [web internal] load build definition from Dockerfile                                                                                                             0.0s
  => => transferring dockerfile: 4.00kB                                                                                                                               0.0s
  => [web internal] load metadata for docker.io/library/python:3.9-slim                                                                                               1.2s
@@ -70,13 +87,14 @@ This is because some of the files get CACHED:
 
 There's a number of ways to fix this
 docker builder prune
-will remove build cache for all images, which can help clear up space, but use it with caution as it removes cache for all images, not just the one you're working with
+will remove build cache for all images, which can help clear up space, but use it with caution as it removes cache
+for all images, not just the one you're working with
 
-docker-compose up --build --no-cache
-is probably a better option
+`docker-compose up --build --no-cache`
+is a better option (but I used the previous option since I am currently working only with 2 containers)
 
-So I rebuilt and finally was able to see the app running on the correct port, 5005 in this example.
- Final correct output (with the correct ports):
+So I rebuilt again and finally was able to see the app running on the correct port, 5005 in this example.
+ Final correct output (with the correct port):
  Attaching to web-1
 web-1  |  * Serving Flask app 'app'
 web-1  |  * Debug mode: off
