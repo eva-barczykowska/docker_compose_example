@@ -65,6 +65,7 @@ http://127.0.0.1:5005
 and also I could see that the output in the Terminal shows the old ports, port change was not visible
 this is because some of the files get CACHED. find CACHED in the logs:
 
+```bash
  => [web internal] load build definition from Dockerfile                                                                                                             0.0s
  => => transferring dockerfile: 4.00kB                                                                                                                               0.0s
  => [web internal] load metadata for docker.io/library/python:3.9-slim                                                                                               1.2s
@@ -84,9 +85,10 @@ this is because some of the files get CACHED. find CACHED in the logs:
  => => writing image sha256:ec5c12cc7e6aaed8b1b53afa96d904cf02cafe81bfb7a3a605b12a66e14e1ebf                                                                         0.0s
  => => naming to docker.io/library/docker_compose_example-web                                                                                                        0.0s
  => [web] resolving provenance for metadata file
+```
 
-There's a number of ways to fix this
-docker builder prune
+There's a number of ways to fix this:
+`docker builder prune`
 will remove build cache for all images, which can help clear up space, but use it with caution as it removes cache
 for all images, not just the one you're working with
 
